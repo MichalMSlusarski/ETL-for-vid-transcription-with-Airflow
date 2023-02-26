@@ -7,6 +7,8 @@ The equivalent of the distinct() function is done using the drop_duplicates() fu
 The equivalent of the write_as_csv() function is the to_csv() function in pandas.
 The difference here, is that I didn't enclose it in a function.
 
+The data required for this task were gathered using rtweet package for R language via direct call to Twitter API. I find the equivalent Python implementation to be surprisingly cumbersome in comparison. Decided not to include it here.
+
 The steps are as follows:
 
 #### 0. Load from csv
@@ -25,7 +27,7 @@ obs = obs[obs['created_at'] < dateTo]
 obs = obs[obs['is_retweet'] == False]
 ```
 
-#### 2. Remove Duplicated
+#### 2. Remove duplicated
 ```
 obs = obs.drop_duplicates(subset=['status_id'], keep='first')
 ```
