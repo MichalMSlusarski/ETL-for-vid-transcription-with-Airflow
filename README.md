@@ -13,6 +13,8 @@ The steps are as follows:
 
 #### 0. Load from csv
 ```
+import pandas as pd
+
 path = input("Enter file path: ")
 obs = pd.read_csv(path)
 ```
