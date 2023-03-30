@@ -1,4 +1,4 @@
-# Basic-data-analysis-in-Python
+# Simple-data-preprocessing-with-Python
 I translated some of my R tasks to Python, adding some features along the way
 
 This is a Python equivalent of the code in initially wrote in R. For example:
