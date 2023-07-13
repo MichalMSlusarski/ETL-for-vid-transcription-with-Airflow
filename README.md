@@ -1,77 +1,63 @@
-# Simple-data-preprocessing-with-Python
-I translated some of my R tasks to Python, adding some features along the way
+# YouTube transcription topic modeling for Polish language
 
-This is a Python equivalent of the code in initially wrote in R. For example:
-The equivalent of the filter() function from R is done using boolean indexing in Python. 
-The equivalent of the distinct() function is done using the drop_duplicates() function in pandas. 
-The equivalent of the write_as_csv() function is the to_csv() function in pandas.
-The difference here, is that I didn't enclose it in a function.
+Apache Airflow-based data processing workflow designed for daily ETL operations on text data.
 
-The data required for this task were gathered using rtweet package for R language via direct call to Twitter API. I find the equivalent Python implementation to be surprisingly cumbersome in comparison. Decided to include it in the 'get-tweets.R' file.
+The project consists of a Directed Acyclic Graph (DAG) that orchestrates the execution of four main tasks: 
+- monitoring selected channel for uploads,
+- downloading transcription of new content,
+- processing transcription,
+- loading extracted data into a BigQuery database.
 
-The steps are as follows:
+The text processing is desinged to extract the following information:
+- topics 
+- sentiment
+- readability
 
-#### 0. Load from csv
-```
-import pandas as pd
+### Topic modeling
 
-path = input("Enter file path: ")
-obs = pd.read_csv(path)
-```
-#### 1. Select needed dates.
-```
-dateTo = input("Enter the date to filter by: ")
-obs = obs[obs['created_at'] < dateTo]
-```
+Upon receiving the downloaded transcription, the processing module begins rudimentary data cleanup. As we are working with a quite cumbersome language - Polish, a thorough lemmatization must be performed. For any modern text sourced from the internet, a pre-trained spaCy model -```pl_core_news_sm``` seems to be doing remarkably well.
 
-#### 1.6 Remove retweets
-```
-obs = obs[obs['is_retweet'] == False]
-```
+The doc2bow method converts the list of tokens into a bag-of-words representation, which is a list of tuples where each tuple represents a word's ID and its frequency in the document. The resulting corpus is a list of such bag-of-words representations.
 
-#### 2. Remove duplicated
-```
-obs = obs.drop_duplicates(subset=['status_id'], keep='first')
-```
+The LdaModel function trains an LDA model on the corpus. It takes the corpus, the number of topics to be extracted (num_topics), the dictionary mapping, and the number of passes as input parameters. The model learns the underlying topic distribution based on the given corpus.
 
-#### 2.25 Filter by favorite_count count and retweet_count
+```python
+def get_topics(text_cleaned: str, num_topics=5, num_words=3) -> list:
 
-```
-min_favorite_count = input("Enter the minimum favorite count: ")
-min_retweet_count = input("Enter the minimum retweet count: ")
-min_favorite_count = int(min_favorite_count)
-min_retweet_count = int(min_retweet_count)
+    tokens = simple_preprocess(text_cleaned)
+    dictionary = corpora.Dictionary([tokens])
+    corpus = [dictionary.doc2bow(tokens)]
+    lda_model = LdaModel(corpus, num_topics=num_topics, id2word=dictionary, passes=10)
 
-obs = obs[(obs['favorite_count'] > min_favorite_count) | (obs['retweet_count'] > min_retweet_count)]
+    topics = []
+    for topic_id in range(num_topics):
+        topic_words = lda_model.show_topic(topic_id, topn=num_words)
+        topic = [(word, weight) for word, weight in topic_words]
+        topics.extend(topic)
+
+    return topics
 ```
 
-#### 2.3 Select distinct by text so that there are no two identical tweets. 
-It's not the same as removing duplicates, as here we can focus solely on text (if someone copied someone's else tweet or retweeted it)
+### Sentiment analysis
 
-```
-obs = obs.drop_duplicates(subset=['text'], keep='first')
+For sentiment analysis I used one of rare pre-trained sentiment analysis models, specifically designed for Polish language. The appropriate function splits the text into individual sentences, applies the sentiment analysis model to each sentence, and collects the sentiment scores. It then calculates the average sentiment score by summing the scores of all sentences and dividing it by the total number of sentences. The resulting sentiment score is rounded to five decimal places and returned by the function.
 
-```
+### Readability index
 
-#### 2.4 Select distinct by users
+The Gunning-Fog formula is used to calculate readability index. It's one of the very few international methods easily and reliably applicable to Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. Here, I used the implementation from the ```textstat``` library.
 
-```
-obs = obs.drop_duplicates(subset=['user_id'], keep='first')
+## Setup
 
-```
+Describe the steps required to install and set up the project. Include any dependencies that need to be installed and provide clear instructions for getting the project up and running.
 
-#### 3. Select needed variables
+## DAG Overview
 
-```
-obs = obs[['user_id', 'status_id', 'created_at', 'screen_name', 'text']]
+The DAG ensures that the tasks are executed in the correct order, with dependencies defined as "get_details" >> "transform_text_task" >> "load_text_task". This guarantees that the data is fetched, transformed, and loaded sequentially.
 
-```
+Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
 
-#### 4. Export to a desired csv file
+The project allows for customization, such as modifying the data retrieval, transformation, and loading functions to adapt to specific data sources and destination systems.
 
-```
-file_title = input("Enter desired file name: ") + '.csv'
-obs.to_csv(file_title, index=False, encoding='UTF-8')
-print(file_title + ' saved successfully')
+## Credits
 
-```
+Apart from the large libraries, this project relies on a very small package called SentimentPL: https://github.com/philvec/sentimentPL (~10★)
