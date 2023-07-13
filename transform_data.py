@@ -96,7 +96,7 @@ def reformat_keywords(keywords: list) -> str:
     return keywords_string
   
 def process(data: dict) -> dict:
-    text = data.get('transcription')
+    text = data.get('transcript')
     char_count = len(text)
     text_cleaned = clean_text(text)
     topics = get_topics(text_cleaned)
