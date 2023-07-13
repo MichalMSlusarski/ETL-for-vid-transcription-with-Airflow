@@ -15,7 +15,7 @@ def load(new_row: dict) -> str:
     ])
 
     out_query = f"""
-    INSERT INTO newonce-178415.content.articles_analytics_1 ({columns})
+    INSERT INTO ({columns})
     VALUES ({values})
     """
 
