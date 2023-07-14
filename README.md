@@ -40,11 +40,11 @@ def get_topics(text_cleaned: str, num_topics=5, num_words=3) -> list:
 
 ### Sentiment analysis
 
-For sentiment analysis I used one of rare pre-trained sentiment analysis models, specifically designed for Polish language. The appropriate function splits the text into individual sentences, applies the sentiment analysis model to each sentence, and collects the sentiment scores. It then calculates the average sentiment score by summing the scores of all sentences and dividing it by the total number of sentences. The resulting sentiment score is rounded to five decimal places and returned by the function.
+For sentiment analysis I used one of rare pre-trained sentiment analysis models, specifically designed for the Polish language. The appropriate function splits the text into individual sentences, applies the sentiment analysis model to each sentence, and collects the sentiment scores. It then calculates the average sentiment score by summing the scores of all sentences and dividing it by the total number of sentences. The resulting sentiment score is rounded to five decimal places and returned by the function.
 
 ### Readability index
 
-The Gunning-Fog formula is used to calculate readability index. It's one of the very few international methods easily and reliably applicable to Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. Here, I used the implementation from the ```textstat``` library.
+The Gunning-Fog formula is used to calculate readability index. It's one of the very few international methods easily and reliably applicable to the Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. Here, I used the implementation from the ```textstat``` library.
 
 ## DAG Overview
 
