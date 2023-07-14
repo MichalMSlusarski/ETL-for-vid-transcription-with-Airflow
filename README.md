@@ -46,13 +46,9 @@ For sentiment analysis I used one of rare pre-trained sentiment analysis models,
 
 The Gunning-Fog formula is used to calculate readability index. It's one of the very few international methods easily and reliably applicable to Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. Here, I used the implementation from the ```textstat``` library.
 
-## Setup
-
-Describe the steps required to install and set up the project. Include any dependencies that need to be installed and provide clear instructions for getting the project up and running.
-
 ## DAG Overview
 
-The DAG ensures that the tasks are executed in the correct order, with dependencies defined as "get_details" >> "transform_text_task" >> "load_text_task". This guarantees that the data is fetched, transformed, and loaded sequentially.
+The DAG ensures that the tasks are executed in the correct order, with dependencies defined as "watch" >> "get" >> "transform" >> "load" >> "report". This guarantees that the data is fetched, transformed, and loaded sequentially.
 
 Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
 
@@ -60,4 +56,4 @@ The project allows for customization, such as modifying the data retrieval, tran
 
 ## Credits
 
-Apart from the large libraries, this project relies on a very small package called SentimentPL: https://github.com/philvec/sentimentPL (~10★)
+Apart from the large libraries, this project benefits from a very small package called SentimentPL: https://github.com/philvec/sentimentPL (~10★)
