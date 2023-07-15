@@ -3,13 +3,12 @@ import airflow
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.email_operator import EmailOperator
-
-dag = DAG(dag_id="txt_etl_process_daily", schedule_interval="@daily", start_date=datetime.now())
-
-# Import the functions from the script
+# functions:
 from get_data import get
 from transform_data import process
 from load_data import load
+
+dag = DAG(dag_id="txt_etl_process_daily", schedule_interval="@daily", start_date=datetime.now())
 
 default_args = {
     'owner': 'your_name',
