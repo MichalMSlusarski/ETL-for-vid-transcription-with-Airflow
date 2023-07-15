@@ -3,6 +3,9 @@ import airflow
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.email_operator import EmailOperator
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.branch_operator import BranchPythonOperator
+
 # functions:
 from get_data import get
 from transform_data import process
@@ -54,6 +57,21 @@ get_text_task = PythonOperator(
     dag=dag,
 )
 
+def check_data_and_send_email(**context):
+    ti = context['ti']
+    data = ti.xcom_pull(task_ids='get_details')
+    if data is None:
+        return 'send_email_notification'
+    else:
+        return 'transform_text_task'
+
+check_data_task = BranchPythonOperator(
+    task_id="check_data",
+    python_callable=check_data_and_send_email,
+    provide_context=True,
+    dag=dag,
+)
+
 transform_text_task = PythonOperator(
     task_id="transform_text_task",
     python_callable=transform_data_func,
@@ -68,11 +86,13 @@ load_text_task = PythonOperator(
     dag=dag
 )
 
-get_text_task >> transform_text_task >> load_text_task
-
-load_text_task >> PythonOperator(
+send_email_notification = DummyOperator(
     task_id="send_email_notification",
-    python_callable=send_email_func,
-    provide_context=True,
-    dag=dag
+    dag=dag,
 )
+
+get_text_task >> check_data_task
+check_data_task >> transform_text_task
+check_data_task >> send_email_notification
+transform_text_task >> load_text_task
+load_text_task >> send_email_notification
