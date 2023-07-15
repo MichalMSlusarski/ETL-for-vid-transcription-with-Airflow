@@ -1,4 +1,4 @@
-# YouTube transcription topic modeling for Polish language
+# YouTube transcription topic modeling for Polish language (Airflow ETL)
 
 Apache Airflow-based data processing workflow designed for daily ETL operations on text data.
 
