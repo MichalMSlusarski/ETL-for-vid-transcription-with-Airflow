@@ -50,7 +50,7 @@ The Gunning-Fog formula is used to calculate readability index. It's one of the 
 
 The DAG ensures that the tasks are executed in the correct order. This guarantees that the data is fetched, transformed, and loaded sequentially.
 
-![DAG](https://github.com/MichalMSlusarski/Transcription-LDA-with-Airflow/blob/main/dag.png)
+![DAG](https://github.com/MichalMSlusarski/Transcription-LDA-with-Airflow/blob/main/DAG.png)
 
 Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
 
