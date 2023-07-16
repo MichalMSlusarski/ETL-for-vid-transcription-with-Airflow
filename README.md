@@ -44,7 +44,7 @@ For sentiment analysis I used one of rare pre-trained sentiment analysis models,
 
 ### Readability index
 
-The Gunning-Fog formula is used to calculate readability index. It's one of the very few international methods easily and reliably applicable to the Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. Here, I used the implementation from the ```textstat``` library.
+The Gunning-Fog formula is used to calculate readability index. It's one of the very few methods easily and reliably applicable to the Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. I used the implementation from the ```textstat``` library.
 
 ## DAG Overview
 
