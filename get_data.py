@@ -8,6 +8,11 @@ credentials = service_account.Credentials.from_service_account_file('youtube-to-
 api_service_name = "youtube"
 api_version = "v3"
 youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
+database_reference_file = 'youtube_video_ids.txt'
+
+
+with open(database_reference_file, 'r') as file:
+    database_ref_lst = file.read().splitlines() # list of all video ids already present in the databse
 
 def get_latest_video_id(channel_id: str):
     search_response = youtube.search().list(
@@ -20,7 +25,12 @@ def get_latest_video_id(channel_id: str):
 
     if "items" in search_response:
         latest_video = search_response["items"][0]["id"]["videoId"] # bruh
-        return latest_video
+        if latest_video not in database_ref_lst:
+            with open(database_reference_file, 'a') as file:
+                file.write(latest_video + '\n')
+            return latest_video
+        else:
+            return None
     else:
         return None
 
@@ -52,19 +62,23 @@ def get_transcript(transcript: str) -> str:
     else:
         return 'Error, no transcript found.'
     
-def get(channel_id='UCBa659QWEk1AI4Tg--mrJ2A') -> dict: # tutaj kanał Toma Scotta
+def get(channel_id='UCBa659QWEk1AI4Tg--mrJ2A'): # tutaj kanał Toma Scotta
+    
     video_id = get_latest_video_id(channel_id)  
-    video_title, channel_name = get_video_details(video_id)
-    transcript = YouTubeTranscriptApi.get_transcript(video_id)
-    transcript = get_transcript(transcript)
 
-    output = {
-        "id" : video_id,
-        "title" : video_title,
-        "channel_name" : channel_name,
-        "transcript" : transcript
-    }
+    if video_id == None:
+        return None    
+    else:
+        video_title, channel_name = get_video_details(video_id)
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = get_transcript(transcript)
 
-    return output
+        output = {
+            "id" : video_id,
+            "title" : video_title,
+            "channel_name" : channel_name,
+            "transcript" : transcript
+        }
+        return output
 
 print(get())
