@@ -17,11 +17,11 @@ The text processing is desinged to extract the following information:
 
 The DAG ensures that the tasks are executed in the correct order. This guarantees that the data is fetched, transformed, and loaded sequentially.
 
-As the process is operates on a daily schedule, it is possible, that no new video was uploaded at that time. Be that the case, the first task returns none
+The process consists of the following tasks:
 
 ![DAG](https://github.com/MichalMSlusarski/Transcription-LDA-with-Airflow/blob/main/DAG.png)
 
-Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
+In the event that no new video was uploaded during the scheduled time, the first task returns None, leading to the termination of the entire process. This avoids unnecessary computation. An appropriate email notification is sent using the send_email_func function.
 
 The project allows for customization, such as modifying the data retrieval, transformation, and loading functions to adapt to specific data sources and destination systems.
 
