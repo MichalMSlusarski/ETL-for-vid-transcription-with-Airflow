@@ -25,7 +25,9 @@ In the event that no new video was uploaded during the scheduled time, the first
 
 The project allows for customization, such as modifying the data retrieval, transformation, and loading functions to adapt to specific data sources and destination systems.
 
-### Obtaining data
+### Data extraction
+
+The whole process of data extraction is built around the YouTube Data API v3. Every day the process begins by checking the specified channel for new updates. The code fetches the latest video ID from the channel, making sure that it is not already in the database reference list before adding it. If all is good to go, we ask for the following information: the video ID, (and based on that...) the title, and the transcript.
 
 ### Topic modeling
 
@@ -33,24 +35,7 @@ Upon receiving the downloaded transcription, the processing module begins rudime
 
 The doc2bow method converts the list of tokens into a bag-of-words representation, which is a list of tuples where each tuple represents a word's ID and its frequency in the document. The resulting corpus is a list of such bag-of-words representations.
 
-The LdaModel function trains an LDA model on the corpus. It takes the corpus, the number of topics to be extracted (num_topics), the dictionary mapping, and the number of passes as input parameters. The model learns the underlying topic distribution based on the given corpus.
-
-```python
-def get_topics(text_cleaned: str, num_topics=5, num_words=3) -> list:
-
-    tokens = simple_preprocess(text_cleaned)
-    dictionary = corpora.Dictionary([tokens])
-    corpus = [dictionary.doc2bow(tokens)]
-    lda_model = LdaModel(corpus, num_topics=num_topics, id2word=dictionary, passes=10)
-
-    topics = []
-    for topic_id in range(num_topics):
-        topic_words = lda_model.show_topic(topic_id, topn=num_words)
-        topic = [(word, weight) for word, weight in topic_words]
-        topics.extend(topic)
-
-    return topics
-```
+The LdaModel function trains an LDA model on the corpus. It takes the corpus, the number of topics to be extracted, the dictionary mapping, and the number of passes as input parameters. The model learns the underlying topic distribution based on the given corpus.
 
 ### Sentiment analysis
 
