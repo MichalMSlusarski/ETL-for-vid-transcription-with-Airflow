@@ -1,4 +1,3 @@
-import pandas as pd
 import re
 import spacy
 import textstat
@@ -109,7 +108,6 @@ def process(data: dict) -> dict:
 
     new_row = {
         "id" : data.get("id"),
-        "upload_time" : data.get("upload_time"),
         "title" : data.get("title"),
         "channel_name" : data.get("channel_name"),
         'text_clean': text_cleaned,
