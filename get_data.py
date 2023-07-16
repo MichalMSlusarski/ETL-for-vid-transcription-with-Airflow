@@ -9,6 +9,21 @@ api_service_name = "youtube"
 api_version = "v3"
 youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
 
+def get_latest_video_id(channel_id: str):
+    search_response = youtube.search().list(
+        part="snippet",
+        channelId=channel_id,
+        maxResults=1,
+        order="date",
+        type="video"
+    ).execute()
+
+    if "items" in search_response:
+        latest_video = search_response["items"][0]["id"]["videoId"] # bruh
+        return latest_video
+    else:
+        return None
+
 def get_video_details(video_id: str):
     try:
         response = youtube.videos().list(
@@ -20,8 +35,7 @@ def get_video_details(video_id: str):
             video = response['items'][0]
             video_title = video['snippet']['title']
             channel_name = video['snippet']['channelTitle']
-            upload_time = video['snippet']['publishedAt']
-            return video_title, channel_name, upload_time
+            return video_title, channel_name
         else:
             return None, None
 
@@ -38,18 +52,19 @@ def get_transcript(transcript: str) -> str:
     else:
         return 'Error, no transcript found.'
     
-def get(video_id: str) -> dict:  
-    video_title, channel_name, upload_time = get_video_details(video_id)
-    upload_time = str(upload_time)
+def get(channel_id='UCBa659QWEk1AI4Tg--mrJ2A') -> dict: # tutaj kanał Toma Scotta
+    video_id = get_latest_video_id(channel_id)  
+    video_title, channel_name = get_video_details(video_id)
     transcript = YouTubeTranscriptApi.get_transcript(video_id)
     transcript = get_transcript(transcript)
 
     output = {
         "id" : video_id,
-        "upload_time" : upload_time,
         "title" : video_title,
         "channel_name" : channel_name,
         "transcript" : transcript
     }
 
     return output
+
+print(get())
