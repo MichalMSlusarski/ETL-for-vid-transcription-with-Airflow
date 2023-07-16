@@ -13,6 +13,20 @@ The text processing is desinged to extract the following information:
 - sentiment
 - readability
 
+## DAG Overview
+
+The DAG ensures that the tasks are executed in the correct order. This guarantees that the data is fetched, transformed, and loaded sequentially.
+
+As the process is operates on a daily schedule, it is possible, that no new video was uploaded at that time. Be that the case, the first task returns none
+
+![DAG](https://github.com/MichalMSlusarski/Transcription-LDA-with-Airflow/blob/main/DAG.png)
+
+Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
+
+The project allows for customization, such as modifying the data retrieval, transformation, and loading functions to adapt to specific data sources and destination systems.
+
+### Obtaining data
+
 ### Topic modeling
 
 Upon receiving the downloaded transcription, the processing module begins rudimentary data cleanup. As we are working with a quite cumbersome language - Polish, a thorough lemmatization must be performed. For any modern text sourced from the internet, a pre-trained spaCy model -```pl_core_news_sm``` seems to be doing remarkably well.
@@ -45,18 +59,6 @@ For sentiment analysis I used one of rare pre-trained sentiment analysis models,
 ### Readability index
 
 The Gunning-Fog formula is used to calculate readability index. It's one of the very few methods easily and reliably applicable to the Polish language. The index provides a numerical value that represents the number of years of formal education required to understand the text. A higher index value indicates a more complex and difficult text, while a lower index value suggests a simpler and easier-to-understand text. I used the implementation from the ```textstat``` library.
-
-## DAG Overview
-
-The DAG ensures that the tasks are executed in the correct order. This guarantees that the data is fetched, transformed, and loaded sequentially.
-
-As the process is operates on a daily schedule, it is possible, that no new video was uploaded at that time
-
-![DAG](https://github.com/MichalMSlusarski/Transcription-LDA-with-Airflow/blob/main/DAG.png)
-
-Upon successful completion of the "load_text_task," an email notification is sent using the send_email_func function, which includes the loaded data as part of the email message.
-
-The project allows for customization, such as modifying the data retrieval, transformation, and loading functions to adapt to specific data sources and destination systems.
 
 ## Credits
 
