@@ -13,7 +13,7 @@ from load_data import load
 dag = DAG(dag_id="txt_etl_process_daily", schedule_interval="@daily", start_date=datetime.now())
 
 default_args = {
-    'owner': 'your_name',
+    'owner': 'Me',
     'depends_on_past': False,
     'email_on_failure': "mslusarski2@gmail.com",
     'email_on_retry': "mslusarski2@gmail.com",
